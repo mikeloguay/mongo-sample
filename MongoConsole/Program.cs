@@ -2,15 +2,17 @@
 
 CustomerRepository customerRepository = new("mongodb://mongouser:password1@localhost:27017/?authSource=admin");
 
-Customer c1 = new()
+int randomNumber = new Random().Next(1, 1000000);
+
+Customer customerToInsert = new()
 {
-    Id = 1,
-    Name = "Customer 1",
+    Id = randomNumber,
+    Name = $"Customer {randomNumber}",
 };
 
-await customerRepository.InsertOne(c1);
+await customerRepository.InsertOne(customerToInsert);
 
-Customer? customer = await customerRepository.FindById(1);
+Customer? customer = await customerRepository.FindById(randomNumber);
 
 if (customer is null)
 {
@@ -18,4 +20,4 @@ if (customer is null)
     return;
 }
 
-Console.WriteLine(customer.Id);
+Console.WriteLine(customer.Value);

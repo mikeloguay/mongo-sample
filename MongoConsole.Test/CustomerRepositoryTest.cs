@@ -1,13 +1,8 @@
 ﻿namespace MongoConsole.Test;
 
-public class CustomerRepositoryTest : IClassFixture<MongoFixture>
+public class CustomerRepositoryTest(MongoFixture fixture) : IClassFixture<MongoFixture>
 {
-    private readonly MongoFixture _fixture;
-
-    public CustomerRepositoryTest(MongoFixture fixture)
-    {
-        _fixture = fixture;
-    }
+    private readonly MongoFixture _fixture = fixture;
 
     [Fact]
     public async Task Insert_Find_OK()

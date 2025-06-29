@@ -1,7 +1,3 @@
 ﻿namespace MongoConsole;
 
-public class Customer
-{
-    public int Id { get; set; }
-    public required string Name { get; set; }
-}
+public readonly record struct Customer(int Id, string Name);

@@ -4,21 +4,21 @@ namespace MongoConsole.Test;
 
 public class MongoFixture : IAsyncLifetime
 {
-    public required MongoDbContainer MongoDbContainer { get; set; }
     public required ICustomerRepository Repository { get; set; }
+    private MongoDbContainer? _mongoDbContainer;
 
     public async Task InitializeAsync()
     {
-        MongoDbContainer = new MongoDbBuilder()
+        _mongoDbContainer = new MongoDbBuilder()
             .WithImage("mongo:latest")
             .Build();
 
-        await MongoDbContainer.StartAsync();
-        Repository = new CustomerRepository(MongoDbContainer.GetConnectionString());
+        await _mongoDbContainer.StartAsync();
+        Repository = new CustomerRepository(_mongoDbContainer.GetConnectionString());
     }
 
     public async Task DisposeAsync()
     {
-        await MongoDbContainer.DisposeAsync();
+        await _mongoDbContainer!.DisposeAsync();
     }
 }
