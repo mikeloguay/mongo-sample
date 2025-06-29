@@ -5,14 +5,26 @@ namespace MongoConsole;
 
 public interface IBarRepository
 {
-    Task InsertOneAsync(BsonDocument document);
-    List<BsonDocument> Find(FilterDefinition<BsonDocument> filter);
+    Task InsertOne(BsonDocument document);
+    Task<List<BsonDocument>> Find(FilterDefinition<BsonDocument> filter);
 }
 
-public class BarRepository(IMongoDatabase database) : IBarRepository
+public class BarRepository : IBarRepository
 {
-    private readonly IMongoCollection<BsonDocument> _collection = database.GetCollection<BsonDocument>("bar");
+    private readonly IMongoCollection<BsonDocument> _collection;
+
+    public BarRepository(string connectionString)
+    {
+        MongoClient client = new(connectionString);
+        IMongoDatabase database = client.GetDatabase("foo");
+        _collection = database.GetCollection<BsonDocument>("bar");
+    }
     
-    public async Task InsertOneAsync(BsonDocument document) => await _collection.InsertOneAsync(document);
-    public List<BsonDocument> Find(FilterDefinition<BsonDocument> filter) => _collection.Find(filter).ToList();
+    public async Task InsertOne(BsonDocument document) => await _collection.InsertOneAsync(document);
+    
+    public async Task<List<BsonDocument>> Find(FilterDefinition<BsonDocument> filter)
+    {
+        IAsyncCursor<BsonDocument> docs = await _collection.FindAsync(filter);
+        return docs.ToList();
+    }
 }
